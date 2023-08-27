@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Room, User } from '../models/chat.interface';
+import { CreateUserDto, CreateUserResponse, Room, User } from '../models/chat.interface';
+import {v4 as uuidv4} from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -26,6 +27,13 @@ export class UserService {
 
   async getRoomByName(roomName: string): Promise<number> {
     return this.rooms.findIndex((room) => room?.name === roomName)
+  }
+
+  createUser(body: CreateUserDto): CreateUserResponse {
+    return {
+      userName: body.userName,
+      userId: uuidv4()
+    }
   }
 
   async addUserToRoom(roomName: string, user: User): Promise<void> {

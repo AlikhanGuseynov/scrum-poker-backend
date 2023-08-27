@@ -4,6 +4,15 @@ export interface User {
   socketId: string;
 }
 
+export interface CreateUserDto {
+  userName: string;
+}
+
+export interface CreateUserResponse {
+  userName: string;
+  userId: string;
+}
+
 export interface Room {
   name: string;
   host: User;

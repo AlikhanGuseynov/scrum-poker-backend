@@ -1,36 +1,31 @@
 import {
-  MessageBody,
+  MessageBody, OnGatewayConnection, OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
+  WebSocketServer
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
-import {
-  ServerToClientEvents,
-  ClientToServerEvents,
-  Message,
-  User,
-} from '../models/chat.interface';
 import { Server, Socket } from 'socket.io';
-import { UserService } from '../user/user.service';
+import { ClientToServerEvents, Message, ServerToClientEvents, User } from '../models/chat.interface';
+import { UserService } from './user.service';
 
 @WebSocketGateway()
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private userService: UserService) {}
+export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+
+  constructor(private userService: UserService) {
+  }
 
   @WebSocketServer() server: Server = new Server<
     ServerToClientEvents,
     ClientToServerEvents
-  >();
+    >();
 
   private logger = new Logger('ChatGateway');
 
   @SubscribeMessage('chat')
   async handleChatEvent(
     @MessageBody()
-    payload: Message,
+      payload: Message,
   ): Promise<Message> {
     this.logger.log(payload);
     this.server.to(payload.roomName).emit('chat', payload); // broadcast messages
@@ -40,7 +35,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('join_room')
   async handleSetClientDataEvent(
     @MessageBody()
-    payload: {
+      payload: {
       roomName: string;
       user: User;
     },

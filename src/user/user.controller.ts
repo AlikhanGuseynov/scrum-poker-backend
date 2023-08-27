@@ -1,6 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Room } from '../models/chat.interface';
+import { CreateUserDto, CreateUserResponse, Room } from '../models/chat.interface';
 
 @Controller('user')
 export class UserController {
@@ -16,5 +16,10 @@ export class UserController {
     const rooms = await this.userService.getRooms()
     const room = await this.userService.getRoomByName(params.room)
     return rooms[room]
+  }
+
+  @Post('api/create')
+  async createUser(@Body() body: CreateUserDto): Promise<CreateUserResponse> {
+    return this.userService.createUser(body)
   }
 }
